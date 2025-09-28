@@ -118,4 +118,4 @@ def download_and_copy(option):
     shutil.rmtree(clone_dir)
 
 def main():
-    global
+    global cursor_pos
