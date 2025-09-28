@@ -1,0 +1,38 @@
+# Basic picom config for fade animations and shadows
+
+backend = "glx";
+vsync = true;
+
+# Enable fading
+fading = true;
+fade-delta = 4;
+fade-in-step = 0.03;
+fade-out-step = 0.03;
+
+# Shadows config
+shadow = true;
+shadow-radius = 7;
+shadow-offset-x = -7;
+shadow-offset-y = -7;
+shadow-opacity = 0.3;
+
+# Disable shadows on docks, notifications, tooltips
+shadow-exclude = [
+  "class_g = 'Dock'",
+  "class_g = 'Xfce4-notifyd'",
+  "class_g = 'Notify-osd'",
+  "class_g = 'Conky'",
+  "window_type = 'tooltip'",
+  "_GTK_FRAME_EXTENTS@"
+];
+
+# Some opacity settings
+detect-client-opacity = true;
+
+# Other tweaks for window types
+wintypes:
+{
+  dock = { shadow = false; };
+  dnd = { shadow = false; };
+  tooltip = { shadow = false; };
+};
