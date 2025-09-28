@@ -11,6 +11,8 @@ options = [
     "gtk_config",
     "panel",
     "compositor",
+    "fastfetch",
+    "kitty",
 ]
 
 selected = [False] * len(options)
@@ -48,6 +50,23 @@ def read_key():
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
+def create_picom_autostart():
+    autostart_dir = os.path.expanduser("~/.config/autostart")
+    os.makedirs(autostart_dir, exist_ok=True)
+    picom_desktop_path = os.path.join(autostart_dir, "picom.desktop")
+    content = """[Desktop Entry]
+Type=Application
+Name=Picom
+Exec=picom --config ~/.config/picom.conf -b
+Comment=X11 compositor for XFCE
+OnlyShowIn=XFCE;
+StartupNotify=false
+Terminal=false
+"""
+    with open(picom_desktop_path, "w") as f:
+        f.write(content)
+    print(f"Created picom autostart entry at {picom_desktop_path}")
+
 def download_and_copy(option):
     repo_url = "https://github.com/NormallyDisblend/Xfce-Dotfiles.git"
     clone_dir = "/tmp/xfce-dotfiles"
@@ -57,6 +76,8 @@ def download_and_copy(option):
         "gtk_config": os.path.expanduser("~/.config/gtk-3.0"),
         "panel": os.path.expanduser("~/.config/xfce4/xfconf/xfce-perchannel-xml"),
         "compositor": os.path.expanduser("~/.config/picom.conf"),
+        "fastfetch": os.path.expanduser("~/.config/fastfetch"),
+        "kitty": os.path.expanduser("~/.config/kitty"),
     }
     config_subfolder_map = {
         "config": "config",
@@ -64,6 +85,8 @@ def download_and_copy(option):
         "gtk_config": "gtk_config",
         "panel": "panel",
         "compositor": "compositor",
+        "fastfetch": "fastfetch",
+        "kitty": "kitty",
     }
     if option not in dest_map or dest_map[option] is None:
         print(f"Skipping {option}: no destination folder defined.")
@@ -95,30 +118,4 @@ def download_and_copy(option):
     shutil.rmtree(clone_dir)
 
 def main():
-    global cursor_pos
-    while True:
-        print_menu()
-        key = read_key()
-        if key == "\x1b[A":
-            cursor_pos = (cursor_pos - 1) % (len(options) + 1)
-        elif key == "\x1b[B":
-            cursor_pos = (cursor_pos + 1) % (len(options) + 1)
-        elif key == "\r":
-            if cursor_pos == 0:
-                break
-            else:
-                selected[cursor_pos - 1] = not selected[cursor_pos - 1]
-        elif key.lower() == "q":
-            print("\nExiting without changes.")
-            sys.exit(0)
-    clear_screen()
-    print("Starting download and setup for the selected configs:\n")
-    for opt, sel in zip(options, selected):
-        if sel:
-            try:
-                download_and_copy(opt)
-            except Exception as e:
-                print(f"Failed to process {opt}: {str(e)}")
-
-if __name__ == "__main__":
-    main()
+    global
