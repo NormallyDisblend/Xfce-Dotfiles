@@ -119,3 +119,33 @@ def download_and_copy(option):
 
 def main():
     global cursor_pos
+    while True:
+        print_menu()
+        key = read_key()
+        if key == "\x1b[A":
+            cursor_pos = (cursor_pos - 1) % (len(options) + 1)
+        elif key == "\x1b[B":
+            cursor_pos = (cursor_pos + 1) % (len(options) + 1)
+        elif key == "\r":
+            if cursor_pos == 0:
+                break
+            else:
+                selected[cursor_pos - 1] = not selected[cursor_pos - 1]
+        elif key.lower() == "q":
+            print("\nExiting without changes.")
+            sys.exit(0)
+    clear_screen()
+    print("Starting download and setup for the selected configs:\n")
+    for opt, sel in zip(options, selected):
+        if sel:
+            try:
+                download_and_copy(opt)
+            except Exception as e:
+                print(f"Failed to process {opt}: {str(e)}")
+
+    if selected[options.index("compositor")]:
+        print("\nSetting up picom to autostart...")
+        create_picom_autostart()
+
+if __name__ == "__main__":
+    main()
